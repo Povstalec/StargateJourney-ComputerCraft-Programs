@@ -32,7 +32,6 @@ end
 abydosAddress = {26,6,14,31,11,29,0}
 chulakAddress = {8,1,22,14,36,19,0}
 lanteaAddress = {18,20,1,15,14,7,19,0}
-badAddress = {1,0}
 
 print("Avaiting input:")
 print("1 = Abydos")
