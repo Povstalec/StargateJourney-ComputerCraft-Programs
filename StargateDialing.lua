@@ -1,4 +1,4 @@
-interface = peripheral.wrap("basic_interface_2")
+interface = peripheral.find("basic_interface")
 
 function dial(address)
    local addressLength = #address
