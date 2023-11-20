@@ -5,8 +5,7 @@ interface = peripheral.find("basic_interface")
 
 function dial(address)
 --Milky Way Stargate is a special case when it comes
---to dialing, so let's look at how you can dial
---other Stargates
+--to dialing
     
     local addressLength = #address
     --You don't really need to have this variable,
@@ -32,31 +31,30 @@ function dial(address)
         --We're simply getting the symbol from the address
         --corresponding to the chevron we want to engage
         
-        --We won't be needing these:
-        --if chevron % 2 == 0 then
-        --    interface.rotateClockwise(symbol)
-        --else
-        --    interface.rotateAntiClockwise(symbol)
-        --end
+        if chevron % 2 == 0 then
+            interface.rotateClockwise(symbol)
+        else
+            interface.rotateAntiClockwise(symbol)
+        end
         --Here we're basically making sure the gate ring
         --rotates clockwise when the number of chevrons
         --engaged is even and counter-clockwise when odd
         
-        --while(not interface.isCurrentSymbol(symbol))
-        --do
-        --    sleep(0)
-        --end
+        while(not interface.isCurrentSymbol(symbol))
+        do
+            sleep(0)
+        end
         --This effectively ensures the program doesn't
         --do anything else and lets the dialing finish
         --rotating to the correct symbol
         
-        --sleep(1)
+        sleep(1)
         --We want to wait 1 second before we
         --engage the chevron
-        --interface.raiseChevron() --This raises the chevron
-        --sleep(1)
-        --interface.lowerChevron() -- and this lowers it
-        --sleep(1)
+        interface.raiseChevron() --This raises the chevron
+        sleep(1)
+        interface.lowerChevron() -- and this lowers it
+        sleep(1)
         
         --Note that from many of the functions here,
         --you can get Stargate Feedback
