@@ -26,11 +26,6 @@ function dial(address)
         
         local symbol = address[chevron]
         
-        interface.engageSymbol(symbol)
-        --Yup, this is all you need for other Stargates!
-        --We're simply getting the symbol from the address
-        --corresponding to the chevron we want to engage
-        
         if chevron % 2 == 0 then
             interface.rotateClockwise(symbol)
         else
