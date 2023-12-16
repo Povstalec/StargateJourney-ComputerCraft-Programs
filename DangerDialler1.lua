@@ -23,7 +23,7 @@ os.sleep(3)
 shell.run("clear")
 
 if interface then
-    return
+    sleep(0)
 else
     print("Stargate not found! Please connect a gate and ensure the interface is connected.")
     os.exit()
