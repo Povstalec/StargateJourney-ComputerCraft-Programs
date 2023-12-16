@@ -1,10 +1,14 @@
 --NOTE! SGJ and AdvPerph required!
 
---Danger's super good custom dialler, V1.2.5
+--Danger's super good custom dialler, V1.6.0
 --Based off the work of Povstalec
+
+-- Global variable declarations
 
 interface = peripheral.find("basic_interface")
 wireless = peripheral.find("modem")
+iris = peripheral.find("redstoneIntegrator")
+
 --NEED TO UPDATE FOR MULTIPLE MODEMS
 -- wireless.isWireless() == false then
 --      print("Ender modem is required")
@@ -13,7 +17,7 @@ wireless = peripheral.find("modem")
 --      print("Ender modem detected!")
 --d
 
-print("Danger\'s Amazing Dialling Program V1.2.5")
+print("Danger\'s Amazing Dialling Program V1.6.0")
 print("Initalising... Please wait")
 os.sleep(3)
 shell.run("clear")
@@ -64,6 +68,14 @@ moonAddress = {34,2,17,1,18,3,24,4,0}
 marsAddress = {9,12,25,34,20,29,8,27,0}
 venusAddress = {32,9,17,16,8,6,21,22,0}
 
+-- Iris sanity check on boot (Useful is the iris was left on and the program reboots, makes sure to set the correct values in memory)
+
+if iris.getOutput("back") == true then
+    irisToggle = 0
+elseif iris.getOutput("back") == false then
+    irisToggle = 1
+end
+
 -- Draw the main page whenever a command is issued
 
 function mainPage()
@@ -82,25 +94,76 @@ function mainPage()
     print("Dial Venus (11)")
 end
 
+--Refresh screen
+
+function clearScreen()
+    shell.run("clear")
+    mainPage()
+end
+
 -- Gate dialling subroutine, prints relevant information to the console and dials the gate
 
 function startDial(address, name, intergalactic)
-    shell.run("clear")
-    if intergalactic == true then
-        print("Warning! Intergalactic dialling in progress!")
+    interface.disconnectStargate()
+    os.sleep(1)
+    if interface.isStargateConnected() == true then
+        clearScreen()
+        print("Cannot dial out, wormhole will not close! (Is the call incoming?)")
+    else
+        shell.run("clear")
+        if intergalactic == true then
+            print("Warning! Intergalactic dialling in progress!")
+        end
+        print("Dialling "..name.."...")
+        dial(address)
+        clearScreen()
+        print("Dialling complete!")
     end
-    print("Dialling "..name.."...")
-    dial(address)
-    print("Dial complete!")
-    mainPage()
 end
+
 --TODO: ABOVE, ADD IN ARGUMENT TO MAINPAGE FUNCTION TO ALLOW THE DISPLAY OF THE LAST DIALLED ADDRESS
 
 --Error subroutine
+
 function errorRoutine()
-    shell.run("clear")
+    clearScreen()
     print("NOT IMPLEMENTED, PLEASE CHOOSE OTHER FUNCTION")
-    mainPage()
+end
+
+
+--Iris control subroutine
+
+function irisControl()
+    shell.run("clear")
+    if irisToggle == 1 then
+        iris.setOutput("back", true)
+        irisToggle = 0
+        clearScreen()
+        print("Shield raised!")
+    elseif irisToggle == 0 then
+        iris.setOutput("back", false)
+        irisToggle = 1
+        clearScreen()
+        print("Shield dropped!")
+    end
+end
+
+--Wormhole termination subroutine
+
+function closeWormhole()
+    if interface.isStargateConnected() == true then
+        interface.disconnectStargate()
+        os.sleep(1)
+        if interface.isStargateConnected() == true then
+            clearScreen()
+            print("Failed to close wormhole! (Is the call incoming?)")
+        else
+            print("Wormhole closed!")
+        end
+    else
+        clearScreen()
+        print("Wormhole is not engaged!")
+    end
 end
 
 -- Main subroutine to draw the address database (Will be converted into a function of its own)
@@ -112,10 +175,12 @@ while true do
     local msg = read()
 
 --Format is as follows for the startDial subroutine, Destination first as "xAddress", followed by the display name you wish to show, finally with the last variable being whether or not it is a intergalactic dial
-    if msg == "1" or msg == "iris" then
-        errorRoutine()
+    if msg == "" then
+        clearScreen()
+    elseif msg == "1" or msg == "iris" then
+        irisControl()
     elseif msg == "2" or msg == "shutdown" then
-        errorRoutine()
+        closeWormhole()
     elseif msg == "3" or msg == "abydos" then
         startDial(abydosAddress, "Abydos")
     elseif msg == "4" or msg == "chulak" then
@@ -123,18 +188,20 @@ while true do
     elseif msg == "5" or msg == "lantea" then
         startDial(lanteaAddress, "Lantea", true)
     elseif msg == "6" or msg == "midway" or msg == "end" then
-        startDial(endAddress, "the Midway Station (The End)")
+        startDial(midwayAddress, "the Midway Station (The End)")
     elseif msg == "7" or msg == "nether" then
         startDial(netherAddress, "the Nether")
     elseif msg == "8" or msg == "athos" or msg == "newathos" or msg == "new athos" then
         startDial(newAthosAddress, "New Athos", true)
     elseif msg == "9" or msg == "moon" or msg == "the moon" or msg =="themoon" then
-        startDial(moonAddress, "The Moon", true)
+        startDial(moonAddress, "The Moon")
     elseif msg == "10" or msg == "mars" then
-        startDial(marsAddress, "Mars", true)
+        startDial(marsAddress, "Mars")
     elseif msg == "11" or msg == "venus" then
-        startDial(venusAddress, "Venus", true)
+        startDial(venusAddress, "Venus")
     else
+        shell.run("clear")
+        mainPage()
         print("Invalid command! Please check your input or bug Danger about his bad code")
     end
 end
