@@ -1,13 +1,59 @@
 --NOTE! SGJ and AdvPerph required!
 
---Danger's super good custom dialler, V1.8.3
+--Danger's super good custom dialler, V1.9.5
 --Based off the work of Povstalec
 
 -- Global variable declarations
 
+-- Command line arguments
+
+local arg = {...}
+-- Expected values: --verbose, --forcePegasus, --forceMilky, --help
+forceMilky = false
+bypassAuto = false
+forcePegasus = false
+verbose = false
+
+for _,v in pairs(arg) do
+    if v == "--help" then
+        print("Danger\'s Dialler Command-Line Arguments: (Argument \/ Function)")
+        print("WARNING! ALL FLAGS ARE FOR TESTING ONLY AND MAY DESTABILISE THE PROGRAM\nUSE AT OWN RISK")
+        print("--help \/ Prints this help menu")
+        print("--verbose \/ Displays extremely detailed information about the program state")
+        print("--forcePegasus \/ Forces the program to assume a Pegasus Stargate")
+        print("--forceMilky \/ Forces the program to assume a Milky Way Stargate")
+        return
+    elseif v == "--verbose" then
+        verbose = true
+        print("Verbose mode on")
+    elseif v == "--forceMilky" then
+        forceMilky = true
+        bypassAuto = true
+        print("Forcing Milky Way Stargate")
+    elseif v == "--forcePegasus" then
+        forcePegasus = true
+        bypassAuto = true
+        print("Forcing Pegasus Stargate")
+    end
+end
+
+if forceMilky == true and forcePegasus == true then
+    print("Error! You cannot force Milky and Pegasus, please select one or the other")
+    return
+end
+
+function verboseInfo(text)
+    if verbose == true then
+        print(text)
+    end
+end
+
 interface = peripheral.find("basic_interface")
+verboseInfo("Interface initalised")
 wireless = peripheral.find("modem")
+verboseInfo("Modem initalised")
 iris = peripheral.find("redstoneIntegrator")
+verboseInfo("Iris initalised")
 
 --NEED TO UPDATE FOR MULTIPLE MODEMS
 -- wireless.isWireless() == false then
@@ -17,44 +63,75 @@ iris = peripheral.find("redstoneIntegrator")
 --      print("Ender modem detected!")
 --d
 
-print("Danger\'s Amazing Dialling Program V1.8.3")
+print("Danger\'s Amazing Dialling Program V1.9.5")
 print("Initalising... Please wait")
 os.sleep(3)
 shell.run("clear")
 
 if interface then
+    verboseInfo("Stargate found!")
     sleep(0)
 else
     print("Stargate not found! Please connect a gate and ensure the interface is connected.")
-    os.exit()
+    return
 end
+
+if interface.engageSymbol ~= nil then
+    verboseInfo("Pegasus Gate Detected")
+    if bypassAuto == false then
+        forcePegasus = true
+        verboseInfo("No force arguments detected, automatically setting gate type")
+    end
+else
+    verboseInfo("Assuming Milky Way Gate")
+    if bypassAuto == false then
+        forceMilky = true
+        verboseInfo("No force arguments detected, automatically setting gate type")
+    end
+end
+
 
 --Stargate dialling function, this basically just lets you dial the gate whenever called
 
 function dial(address)
-    local addressLength = #address
-    local start = interface.getChevronsEngaged() + 1
+    verboseInfo("Primary dialling function called with value: not implemented")
+    if forceMilky == true then
+        verboseInfo("Milky dial in progress...")
+        local addressLength = #address
+        local start = interface.getChevronsEngaged() + 1
     
-    for chevron = start,addressLength,1
-    do
-        local symbol = address[chevron]
-        
-        if chevron % 2 == 0 then
-            interface.rotateClockwise(symbol)
-        else
-            interface.rotateAntiClockwise(symbol)
-        end
-
-        while(not interface.isCurrentSymbol(symbol))
+        for chevron = start,addressLength,1
         do
-            sleep(0)
-        end
-        sleep(1)
+            local symbol = address[chevron]
+        
+            if chevron % 2 == 0 then
+                interface.rotateClockwise(symbol)
+            else
+                interface.rotateAntiClockwise(symbol)
+            end
 
-        interface.raiseChevron()
-        sleep(0.5)
-        interface.lowerChevron()
-        sleep(0.5)
+            while(not interface.isCurrentSymbol(symbol))
+            do
+                sleep(0)
+            end
+            sleep(1)
+
+            interface.raiseChevron()
+            sleep(0.5)
+            interface.lowerChevron()
+            sleep(0.5)
+        end
+    elseif forcePegasus == true then
+        verboseInfo("Pegasus dial in progress...")
+        local addressLength = #address
+        local start = interface.getChevronsEngaged() + 1
+
+        for chevron = start,addressLength,1
+        do
+            local symbol = address[chevron]
+            
+            interface.engageSymbol(symbol)
+        end
     end
 end
 
@@ -75,18 +152,24 @@ moonAddress = {34,2,17,1,18,3,24,4,0}
 marsAddress = {9,12,25,34,20,29,8,27,0}
 venusAddress = {32,9,17,16,8,6,21,22,0}
 glacioAddress = {14,33,1,7,15,32,31,2,0}
-
+verboseInfo("Address database initalised")
 -- Iris sanity check on boot (Useful is the iris was left on and the program reboots, makes sure to set the correct values in memory)
 if iris then
     if iris.getOutput("back") == true then
         irisToggle = 0
+        verboseInfo("Iris sanity check performed, iris state set to 0")
     elseif iris.getOutput("back") == false then
         irisToggle = 1
+        verboseInfo("Iris sanity check performed, iris state set to 1")
     end
 end
 -- Draw the main page whenever a command is issued
 
 function mainPage()
+    verboseInfo("mainPage function called")
+    if forcePegasus == true then
+        print("Warning! Pegasus gate type detected, please note that pegasus support is currently being tested and there are many bugs with it")
+    end
     print("TEMPORARY: Stargate Control Interface, please select and input a command below")
     print("To toggle the iris, type \"iris\" or press 1")
     print("To terminate the wormhole, type \"shutdown\" or press 2")
@@ -95,8 +178,11 @@ function mainPage()
 end
 
 function addressList(page)
+    verboseInfo("addressList function called with value: not implemented")
     page = tonumber(page)
-    if page == 1 then
+    if page == 69 then
+        print("Nice")
+    elseif page == 1 then
         print("Dial Abydos (3)")
         print("Dial Chulak (4)")
         print("Dial Lantea (5)")
@@ -107,7 +193,7 @@ function addressList(page)
         print("Dial Mars (10)")
         print("Dial Venus (11)")
         print("Dial Glacio (12)")
-    elseif page >= 2 then
+    else
         print("No other entries exist!")
     end
 end
@@ -117,14 +203,17 @@ end
 function clearScreen()
     shell.run("clear")
     mainPage()
+    verboseInfo("clearScreen function called")
 end
 
 -- Gate dialling subroutine, prints relevant information to the console and dials the gate
 
 function startDial(address, name, isIntergalactic, isDirect)
+    verboseInfo("Secondary dialling subroutine called with following values: not implemented")
     interface.disconnectStargate()
     os.sleep(1)
     if interface.isStargateConnected() == true then
+        verboseInfo("Stargate connection check passed")
         clearScreen()
         print("Cannot dial out, wormhole will not close! (Is the call incoming?)")
     else
@@ -156,6 +245,7 @@ end
 --Error subroutine
 
 function errorRoutine()
+    verboseInfo("errorRoutine function called")
     clearScreen()
     print("NOT IMPLEMENTED, PLEASE CHOOSE OTHER FUNCTION")
 end
@@ -164,20 +254,24 @@ end
 --Iris control subroutine
 
 function irisControl()
+    verboseInfo("irisControl subroutine called")
     if iris then
         shell.run("clear")
         if irisToggle == 1 then
             iris.setOutput("back", true)
             irisToggle = 0
             clearScreen()
+            verboseInfo("Iris state presently 1, setting 0 and enabling iris")
             print("Shield raised!")
         elseif irisToggle == 0 then
             iris.setOutput("back", false)
             irisToggle = 1
             clearScreen()
+            verboseInfo("Iris state presently 0, setting 1 and disabling iris")
             print("Shield dropped!")
         end
     else
+        clearScreen()
         print("Iris not found!")
     end
 end
@@ -185,6 +279,7 @@ end
 --Wormhole termination subroutine
 
 function closeWormhole()
+    verboseInfo("closeWormhole function called")
     if interface.isStargateConnected() == true then
         interface.disconnectStargate()
         os.sleep(1)
