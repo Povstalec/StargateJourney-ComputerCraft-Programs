@@ -71,7 +71,7 @@ print("Danger\'s Dialler V2.0 Penultimate Update before Rewrite")
 print("Initalising... Please wait")
 os.sleep(3)
 term.clear()
-setCursorPos(1, 1)
+term.setCursorPos(1, 1)
 
 if interface then
     verboseInfo("Stargate found!")
@@ -276,7 +276,7 @@ end
 
 function clearScreen()
     term.clear()
-    setCursorPos(1, 1)
+    term.setCursorPos(1, 1)
     mainPage()
     verboseInfo("clearScreen function called")
 end
@@ -295,7 +295,7 @@ function startDial(address, name, isIntergalactic, isDirect)
         print("Cannot dial out, wormhole will not close! (Is the call incoming?)")
     else
         term.clear()
-        setCursorPos(1, 1)
+        term.setCursorPos(1, 1)
         if address == customAddress then
             print("Dialling custom address: "..tostring(customAddress))
             dial(address)
@@ -356,7 +356,7 @@ function irisControl()
     verboseInfo("irisControl subroutine called")
     if iris then
         term.clear()
-        setCursorPos(1, 1)
+        term.setCursorPos(1, 1)
         if irisToggle == 1 then
             iris.setOutput("back", true)
             irisToggle = 0
@@ -424,7 +424,7 @@ while true do
     elseif msg == "custom" then
         customAddress = {}
         term.clear()
-        setCursorPos(1, 1)
+        term.setCursorPos(1, 1)
         print("Custom destination selection:")
         print("To dial a custom destination, please type your address in the following format\nBe sure not to include spaces or any other text")
         print("\n\nExample address, \"1,2,3,4,5,6,0\", where 0 is the Point of Origin")
