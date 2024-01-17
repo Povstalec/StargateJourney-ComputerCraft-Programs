@@ -5,12 +5,19 @@
 
 -- TODO: Add buttons to dismiss popup and error windows. Have a way for the program to know the previously drawn window and redraw it.
 
-function drawWindow(windowTitle, windowContent, type, windowHeight, windowLength, dialogueString, windowPriority)
+function drawWindow(windowTitle, windowContent, type, windowHeight, windowLength, dialogueString, windowPriority, program)
 term.setBackgroundColour(colours.black)
 popupWindow = false
 buttonColour = colours.white
     if type == nil then
         print("Window type not specified or unsupported, please choose a window type.")
+    elseif type == "program" then
+        --Render a program inside the window, this will be a special case.
+        titlebarColour = colours.lime
+        windowColour = colours.black
+        textColour = colours.white
+        dropshadowColour = colours.grey
+        -- Need to restrict program to bounds of window and add a way to exit the program.
     elseif type == "master" then
         -- Only clear the screen when drawing the main control window! Otherwise popups will be the only visible UI elements.
         term.clear()
@@ -137,7 +144,7 @@ buttonColour = colours.white
         end
         term.write(string)
     end
-    
+
     windowContentLength = string.len(windowContent)
     if math.floor(windowContentLength + 2) > windowLength then
         windowContent = string.sub(windowContent, 1, windowLength - 6)
@@ -221,10 +228,26 @@ buttonColour = colours.white
             if keyPressed == 28 then
                 -- Need to adjust this to redraw the window below it, it's not always the master window
                 drawWindow(lastWindowTitle, lastWindowContent, lastWindowType, lastWindowHeight, lastWindowLength, lastDialogueString)
+                term.setCursorPos(windowContentX, windowContentY + 7)
+                windowString("Dialogue box dismissed")
             end
         end
     end
     
+-- WIP for program window type support.
+if type == "program" then
+    term.setCursorPos(windowContentX, windowContentY)
+    shell.run(program)
+    term.setCursorPos(windowContentX, windowContentY + 1)
+    windowString("Press any key to continue.")
+    while keyPressed ~= 28 do
+        event, keyPressed = os.pullEvent("key")
+        if keyPressed ~= nil then
+            drawWindow(lastWindowTitle, lastWindowContent, lastWindowType, lastWindowHeight, lastWindowLength, lastDialogueString)
+        end
+    end
+end
+
     -- Draw special contents for stargate:
 
     if type == "stargate" then
@@ -238,4 +261,5 @@ buttonColour = colours.white
 --    end
 end
 drawWindow("Stargate Status", "Stargate Information System:", "stargate", 0, 0)
-drawWindow("Test", "Error!", "error", 7, 18, "OK")
+--drawWindow("Test", "Error!", "error", 6, 18, "OK")
+--drawWindow("Shell", "", "program", 11, 40, "", 0, "hello")
