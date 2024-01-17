@@ -19,6 +19,12 @@ buttonColour = colours.white
         windowColour = colours.white
         textColour = colours.black
         dropshadowColour = colours.grey
+        lastWindowTitle = windowTitle
+        lastWindowContent = windowContent
+        lastWindowType = type
+        lastWindowHeight = windowHeight
+        lastWindowLength = windowLength
+        lastDialogueString = dialogueString
     elseif type == "popup" then
         -- Dont clear the screen
         -- Window colours
@@ -43,6 +49,12 @@ buttonColour = colours.white
         windowColour = colours.white
         textColour = colours.black
         dropshadowColour = colours.grey
+        lastWindowTitle = windowTitle
+        lastWindowContent = windowContent
+        lastWindowType = type
+        lastWindowHeight = windowHeight
+        lastWindowLength = windowLength
+        lastDialogueString = dialogueString
     end
 
     -- Initalisation of variables.
@@ -115,11 +127,24 @@ buttonColour = colours.white
         windowTitle = string.sub(windowTitle, 1, windowLength - 6)
         windowTitle = windowTitle .. "..."
     end
+
+    -- Turn into function for any string to be calculated for length and truncated if needed.
+    function windowString(string)
+        windowStringLength = string.len(string)
+        if math.floor(windowStringLength + 2) > windowLength then
+            string = string.sub(string, 1, windowLength - 6)
+            string = string .. "..."
+        end
+        term.write(string)
+    end
+    
     windowContentLength = string.len(windowContent)
     if math.floor(windowContentLength + 2) > windowLength then
         windowContent = string.sub(windowContent, 1, windowLength - 6)
         windowContent = windowContent .. "..."
     end
+
+
 
     -- Calculate the centre of the window and recalculate the centre of the titlebar
     centreWindowLength = math.floor(windowLength / 2)
@@ -169,6 +194,8 @@ buttonColour = colours.white
 --        end
 --   end
 
+
+
     -- Draw window contents
 
     -- WHY ISNT IT DRAWING THE CONTENTS NOW
@@ -193,11 +220,18 @@ buttonColour = colours.white
             event, keyPressed = os.pullEvent("key")
             if keyPressed == 28 then
                 -- Need to adjust this to redraw the window below it, it's not always the master window
-                drawWindow("Stargate Status", "Stargate Information System:", "stargate", 0, 0)
+                drawWindow(lastWindowTitle, lastWindowContent, lastWindowType, lastWindowHeight, lastWindowLength, lastDialogueString)
             end
         end
     end
     
+    -- Draw special contents for stargate:
+
+    if type == "stargate" then
+        term.setCursorPos(windowContentX, windowContentY + 4)
+        windowString("Blah blah blah blah blah blah blah")
+    end
+
     term.setCursorPos(termSizeX, termSizeY)
 --    if type == "stargate" then
 --        drawWindow("Warning!", "Gate overloading!", "error", 5, 18)
