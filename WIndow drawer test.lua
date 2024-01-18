@@ -206,7 +206,7 @@ buttonColour = colours.white
     -- Draw window contents
 
     -- WHY ISNT IT DRAWING THE CONTENTS NOW
-    windowContentX = windowSizeXstart + 3
+    windowContentX = windowSizeXstart + 2
     windowContentY = windowSizeYstart + 2
     term.setCursorPos(windowContentX, windowContentY)
     term.setBackgroundColour(windowColour)
@@ -237,12 +237,20 @@ buttonColour = colours.white
 -- WIP for program window type support.
 if type == "program" then
     term.setCursorPos(windowContentX, windowContentY)
+    -- INSERT WINDOW API STUFF HERE
+    programWindow = window.create(term.native(), windowContentX, windowContentY, windowLength - 2, windowHeight - 4, true)
+    programWindow.setBackgroundColor(windowColour)
+    programWindow.clear()
+    term.redirect(programWindow)
     shell.run(program)
-    term.setCursorPos(windowContentX, windowContentY + 1)
+    term.redirect(term.native())
+    term.setCursorPos(windowContentX, windowSizeY - 1)
     windowString("Press any key to continue.")
-    while keyPressed ~= 28 do
+    while keyPressed == nil do
         event, keyPressed = os.pullEvent("key")
         if keyPressed ~= nil then
+            -- For some reason, the cursor position isn't resetting properly when trying to draw, maybe if I declare it here, it will fix it
+            -- To be more accurate, the cursor position does seem to be resetting properly, but when the program ends, for some reason it sets it to the program window content previous position and clears the screen from the start to the end of where the program window would be.
             drawWindow(lastWindowTitle, lastWindowContent, lastWindowType, lastWindowHeight, lastWindowLength, lastDialogueString)
         end
     end
@@ -262,4 +270,5 @@ end
 end
 drawWindow("Stargate Status", "Stargate Information System:", "stargate", 0, 0)
 --drawWindow("Test", "Error!", "error", 6, 18, "OK")
---drawWindow("Shell", "", "program", 11, 40, "", 0, "hello")
+-- I need some way to tell or trick programs to not exceed the bounds of a window.
+drawWindow("Shell", "", "program", 11, 40, "", 0, "cash")
