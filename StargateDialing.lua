@@ -1,4 +1,5 @@
-interface = peripheral.find("basic_interface")
+--This code should work with the currently most recent version as of writing this (v0.6.17)
+interface = peripheral.find("crystal_interface")
 --This finds some interface connected to the
 --computer network, but since that one is the only
 --one connected, it will always be that one near the gate

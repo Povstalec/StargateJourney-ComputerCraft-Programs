@@ -1,3 +1,4 @@
+--This code should work with the currently most recent version as of writing this (v0.6.17)
 interface = peripheral.find("basic_interface")
 --This finds some interface connected to the
 --computer network, but since that one is the only
@@ -46,9 +47,9 @@ function dial(address)
         sleep(1)
         --We want to wait 1 second before we
         --engage the chevron
-        interface.raiseChevron() --This raises the chevron
+        interface.openChevron() --This opens the chevron
         sleep(1)
-        interface.lowerChevron() -- and this lowers it
+        interface.closeChevron() -- and this closes it
         sleep(1)
         
         --Note that from many of the functions here,
