@@ -80,7 +80,7 @@ abydosAddress = {26,6,14,31,11,29,0}
 --will not finish
 chulakAddress = {8,1,22,14,36,19,0}
 
-lanteaAddress = {18,20,1,15,14,7,19}
+lanteaAddress = {18,20,1,15,14,7,19,0}
 
 --Now let's write the actual part of the program
 --that will start the dialing
