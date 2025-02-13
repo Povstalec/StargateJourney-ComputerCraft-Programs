@@ -5,9 +5,9 @@ function dial(address)
     local addressLength = #address
     
     if addressLength == 8 then
-        interface.setChevronConfiguration({0, 1, 2, 3, 4, 6, 7, 8, 5})
+        interface.setChevronConfiguration({1, 2, 3, 6, 7, 8, 4, 5})
     elseif addressLength == 9 then
-        interface.setChevronConfiguration({0, 1, 2, 3, 4, 5, 6, 7, 8})
+        interface.setChevronConfiguration({1, 2, 3, 4, 5, 6, 7, 8})
     end
    
     local start = interface.getChevronsEngaged() + 1
